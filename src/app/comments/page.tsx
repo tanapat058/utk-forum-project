@@ -1,6 +1,7 @@
 "use client";
-import React, { useState } from "react";
-import { Button, Input, List, Avatar } from "antd";
+import React, { useState, useEffect } from "react";
+import { Button, Input, List, Avatar, Card } from "antd";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const { TextArea } = Input;
 
@@ -10,16 +11,32 @@ type Comment = {
   content: string;
 };
 
+type Post = {
+  id: number;
+  title: string;
+  content: string;
+};
+
 const CommentPage: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([
     { id: 1, username: "Alice", content: "โพสต์นี้ดีมากเลย!" },
     { id: 2, username: "Bob", content: "ขอบคุณสำหรับข้อมูลครับ" },
   ]);
   const [newComment, setNewComment] = useState("");
+  const searchParams = useSearchParams();
+  const postId = Number(searchParams.get("postId"));
+  const [post, setPost] = useState<Post | undefined>(undefined);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!postId) return;
+    fetch(`/api/posts`)
+      .then(res => res.json())
+      .then((data: Post[]) => setPost(data.find(p => p.id === postId)));
+  }, [postId]);
 
   const handleSubmit = () => {
     if (!newComment.trim()) return;
-
     const newEntry: Comment = {
       id: comments.length + 1,
       username: "ผู้ใช้งานทั่วไป",
@@ -32,10 +49,18 @@ const CommentPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center px-4 py-10">
       <div className="w-full max-w-2xl bg-white rounded-2xl shadow-md p-8">
+        <Button onClick={() => router.push('/posts')} className="mb-6">ย้อนกลับไปหน้ากระทู้</Button>
+        {post && (
+          <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">{post.title}</h1>
+        )}
+        {post && (
+          <Card className="mb-8" title="เนื้อหากระทู้">
+            <p>{post.content}</p>
+          </Card>
+        )}
         <h2 className="text-2xl font-semibold text-gray-800 mb-6 text-center">
           แสดงความคิดเห็น
         </h2>
-
         <TextArea
           rows={4}
           placeholder="พิมพ์ความคิดเห็นของคุณ..."
@@ -43,7 +68,6 @@ const CommentPage: React.FC = () => {
           onChange={(e) => setNewComment(e.target.value)}
           className="mb-8"
         />
-
         <Button
           type="primary"
           className="w-full mb-8 mt-4"
@@ -52,7 +76,6 @@ const CommentPage: React.FC = () => {
         >
           ส่งความคิดเห็น
         </Button>
-
         <List
           header={`${comments.length} ความคิดเห็น`}
           itemLayout="horizontal"
