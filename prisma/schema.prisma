@@ -1,22 +1,20 @@
 generator client {
-    provider = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
-}
-
-model User {
-    id       Int @unique @id @default(autoincrement()) //มีการรันนิ่งข้อมูลไปเรื่อยๆ
-    
-    usernsme String
-    password String
+  provider = "sqlite" // หรือ "postgresql", "mysql", ฯลฯ
+  url      = env("DATABASE_URL")
 }
 
 model Post {
-    id      Int    @id @default(autoincrement())
-    title   String
-    content String
-    // createdAt DateTime @default(now())
+  id      Int     @id @default(autoincrement())
+  title   String
+  content String
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
 }
