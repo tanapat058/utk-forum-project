@@ -19,8 +19,8 @@ type Post = {
 
 const CommentPage: React.FC = () => {
   const [comments, setComments] = useState<Comment[]>([
-    { id: 1, username: "Alice", content: "โพสต์นี้ดีมากเลย!" },
-    { id: 2, username: "Bob", content: "ขอบคุณสำหรับข้อมูลครับ" },
+    { id: 1, username: "Pleum", content: "โพสต์นี้ดีมากเลย!" },
+    { id: 2, username: "Got", content: "ขอบคุณสำหรับข้อมูลครับ" },
   ]);
   const [newComment, setNewComment] = useState("");
   const searchParams = useSearchParams();
