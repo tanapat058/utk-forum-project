@@ -6,11 +6,12 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "prisma:migrate": "npx prisma migrate dev"
   },
   "dependencies": {
     "@ant-design/nextjs-registry": "^1.0.2",
-    "@prisma/client": "^6.8.1",
+    "@prisma/client": "^6.8.2",
     "antd": "^5.25.1",
     "next": "15.3.2",
     "react": "18.2.0",
@@ -25,7 +26,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
-    "prisma": "^6.8.1",
+    "prisma": "^6.8.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

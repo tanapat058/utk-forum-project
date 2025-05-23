@@ -1,11 +1,16 @@
-'use server';
+'use server'; // ใช้กับ Next.js App Router และ Server Actions (เฉพาะ Next.js 13+)
 
-import { prisma } from '@/lib/prisma';
+import { prisma } from '@/lib/prisma'; // หรือ path ไปยัง prisma instance ของคุณ
 
-export async function login(username: string, password: string) {
+export async function login(username: string, password: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
     where: { username },
   });
 
-  return user?.password === password;
+  // ตรวจสอบรหัสผ่านตรง (ในของจริงควรใช้ bcrypt เปรียบเทียบ)
+  if (user && user.password === password) {
+    return true;
+  }
+
+  return false;
 }

@@ -71,7 +71,7 @@ const PostsPage: React.FC = () => {
               </div>
             </List.Item>
           )}
-        />
+        />npx prisma db push
       </div>
       <Modal
         title="เพิ่มกระทู้"

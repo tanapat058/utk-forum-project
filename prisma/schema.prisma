@@ -7,14 +7,38 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id      Int     @id @default(autoincrement())
-  title   String
-  content String
+model User {
+  id        Int       @id @default(autoincrement())
+  username  String    @unique
+  password  String
+  firstName String?
+  lastName  String?
+  faculty   String?
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  Post      Post[]
+  Comment   Comment[]
 }
 
-model User {
-  id       Int    @id @default(autoincrement())
-  username String @unique
-  password String
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  authorId  Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  author  User      @relation(fields: [authorId], references: [id])
+  Comment Comment[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  comment   String
+  postId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  post      Post     @relation(fields: [postId], references: [id])
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
 }
