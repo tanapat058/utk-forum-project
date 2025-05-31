@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, List, Modal, Form, Input, message, Divider } from "antd";
 import { useRouter } from "next/navigation";
+import { useUserStore } from "../../../store/user";
 
 interface Post {
   id: number;
@@ -15,6 +16,7 @@ const PostsPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [form] = Form.useForm();
   const router = useRouter();
+  const { id: userId } = useUserStore() as { id: string; username: string };
 
   // โหลดรายการกระทู้
   const fetchPosts = async () => {
@@ -34,18 +36,28 @@ const PostsPage: React.FC = () => {
   // เพิ่มกระทู้ใหม่
   const onFinish = async (values: { title: string; content: string }) => {
     try {
+      if (!userId) {
+        message.error("กรุณาเข้าสู่ระบบก่อนโพสต์กระทู้");
+        return;
+      }
       const res = await fetch("/api/postss", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, authorId: userId }),
       });
-      if (!res.ok) throw new Error();
+      console.log("POST /api/postss response", res);
+      if (!res.ok) {
+        const errText = await res.text();
+        console.error("POST /api/postss failed:", errText);
+        throw new Error(errText);
+      }
       form.resetFields();
       setIsModalOpen(false);
       fetchPosts();
       message.success("เพิ่มกระทู้สำเร็จ");
-    } catch {
-      message.error("เพิ่มกระทู้ไม่สำเร็จ");
+    } catch (err: any) {
+      console.error("Error in onFinish:", err);
+      message.error("เพิ่มกระทู้ไม่สำเร็จ: " + (err?.message || ""));
     }
   };
 

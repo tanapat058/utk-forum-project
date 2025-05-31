@@ -4,7 +4,7 @@ import { prisma } from '@/lib/prisma'; // หรือ path ไปยัง pris
 
 export async function login(username: string, password: string): Promise<boolean> {
   const user = await prisma.user.findUnique({
-    where: { username },
+    where: { username }, // <-- ใช้ username ได้แน่นอน เพราะ schema.prisma ตอนนี้สะกดถูกแล้ว
   });
 
   // ตรวจสอบรหัสผ่านตรง (ในของจริงควรใช้ bcrypt เปรียบเทียบ)

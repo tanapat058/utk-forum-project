@@ -16,10 +16,12 @@ export async function GET() {
 }
 
 export async function POST(req: NextRequest) {
-  const { title, content } = await req.json();
-  // ต้องมี user id = 1 ในฐานข้อมูล
+  const { title, content, authorId } = await req.json();
+  if (!authorId) {
+    return NextResponse.json({ error: "authorId is required" }, { status: 400 });
+  }
   const post = await prisma.post.create({
-    data: { title, content, authorId: 1 },
+    data: { title, content, authorId },
   });
   return NextResponse.json(post, { status: 201 });
 }
