@@ -1,8 +1,8 @@
 "use client";
 import React, { useState } from "react";
 import type { FormProps } from "antd";
-import { Button, Checkbox, Form, Input } from "antd";
-import { login } from "./action";
+import { Button, Checkbox, Form, Input, message } from "antd";
+import { login } from "./action"; // ฟังก์ชันล็อกอินของคุณ
 import { useRouter } from "next/navigation";
 
 type FieldType = {
@@ -22,20 +22,24 @@ const buttonGlowHoverStyle: React.CSSProperties = {
 const App: React.FC = () => {
   const router = useRouter();
   const [loginHovered, setLoginHovered] = useState(false);
+  const [registerHovered, setRegisterHovered] = useState(false);
 
   const onFinish: FormProps<FieldType>["onFinish"] = async (values) => {
-    const isLogin = await login(values.username, values.password);
-    if (isLogin) {
-      alert("เข้าสู่ระบบเเล้ว ยินดีต้อนรับ " + values.username);
-      router.push("/postss"); // หรือ "/posts" ตาม route ที่คุณมี
-    } else {
-      alert("username หรือ password ไม่ถูกต้อง");
+    try {
+      const isLogin = await login(values.username, values.password);
+      if (isLogin) {
+        message.success("เข้าสู่ระบบเเล้ว ยินดีต้อนรับ " + values.username);
+        router.push("/postss"); // ไปหน้ารายการกระทู้
+      } else {
+        message.error("ชื่อผู้ใช้ หรือ รหัสผ่าน ไม่ถูกต้อง");
+      }
+    } catch (error) {
+      message.error("เกิดข้อผิดพลาดในการล็อกอิน");
+      console.error(error);
     }
   };
 
-  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (
-    errorInfo
-  ) => {
+  const onFinishFailed: FormProps<FieldType>["onFinishFailed"] = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
 
@@ -119,25 +123,51 @@ const App: React.FC = () => {
           </Form.Item>
 
           <Form.Item style={{ marginBottom: 0 }}>
-            <Button
-              type="primary"
-              htmlType="submit"
-              size="large"
-              block
-              style={{
-                background: "linear-gradient(90deg, #722ed1 0%, #8ec5fc 100%)",
-                border: "none",
-                borderRadius: 8,
-                fontWeight: 600,
-                fontSize: 16,
-                ...buttonGlowStyle,
-                ...(loginHovered ? buttonGlowHoverStyle : {}),
-              }}
-              onMouseEnter={() => setLoginHovered(true)}
-              onMouseLeave={() => setLoginHovered(false)}
-            >
-              เข้าสู่ระบบ
-            </Button>
+            <div style={{ display: "flex", justifyContent: "center", gap: 16 }}>
+              <Button
+                type="primary"
+                htmlType="submit"
+                size="large"
+                style={{
+                  minWidth: 140,
+                  background: "linear-gradient(90deg, #722ed1 0%, #8ec5fc 100%)",
+                  border: "none",
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  fontSize: 16,
+                  ...buttonGlowStyle,
+                  ...(loginHovered ? buttonGlowHoverStyle : {}),
+                }}
+                onMouseEnter={() => setLoginHovered(true)}
+                onMouseLeave={() => setLoginHovered(false)}
+              >
+                เข้าสู่ระบบ
+              </Button>
+
+              <Button
+                type="default"
+                size="large"
+                style={{
+                  minWidth: 140,
+                  borderRadius: 8,
+                  fontWeight: 600,
+                  fontSize: 16,
+                  color: "#722ed1",
+                  borderColor: "#722ed1",
+                  backgroundColor: "#fff",
+                  transition: "all 0.2s ease-in-out",
+                  boxShadow: registerHovered
+                    ? "0 0 16px 2px #8ec5fc, 0 0 8px 2px #722ed1"
+                    : "none",
+                  transform: registerHovered ? "scale(1.07)" : "none",
+                }}
+                onMouseEnter={() => setRegisterHovered(true)}
+                onMouseLeave={() => setRegisterHovered(false)}
+                onClick={() => router.push("/members")}
+              >
+                สมัครสมาชิก
+              </Button>
+            </div>
           </Form.Item>
         </Form>
       </div>
