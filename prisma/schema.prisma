@@ -27,6 +27,7 @@ model Post {
   createdAt   DateTime  @default(now())
   authorId    Int
   updatedAt   DateTime  @updatedAt
+  category    String    @default("general") // เพิ่ม category
 
   author  User      @relation(fields: [authorId], references: [id])
   Comment Comment[]

@@ -10,6 +10,7 @@ export async function GET() {
     title: p.title,
     content: p.content,
     createdAt: p.createdAt, // เพิ่มตรงนี้
+    category: p.category, // ส่ง category ออกมาด้วย
     // commentsCount: p._count.Comment (ถ้ามี)
   }));
   return NextResponse.json(result);
